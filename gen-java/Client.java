@@ -17,7 +17,7 @@ public class Client {
         try {
             // Get Configs
             Properties prop = new Properties();
-            InputStream is = new FileInputStream("chordht.cfg");
+            InputStream is = new FileInputStream("/home/taj/Taj/Tor Projects/ChorDHT/gen-java/chordht.cfg");
             prop.load(is);
             String[] nodeInfo;
             Option option = Option.set;
@@ -38,10 +38,16 @@ public class Client {
 
             while (option != Option.exit) {
                 // UI Menu Loop
-                option = Option.valueOf(console.readLine("CHOOSE> get, set, desc, exit\n> "));
+                System.out.println("CHOOSE> get, set, desc, exit\n> ");
+                BufferedReader inp = new BufferedReader (new InputStreamReader(System.in));
+                String strOption = inp.readLine();
+
+                option = Option.valueOf(strOption);
                 switch (option) {
                     case get:
-                        String key = console.readLine("Enter Key: ");
+                        System.out.println("Enter Key: ");
+                        inp = new BufferedReader (new InputStreamReader(System.in));
+                        String key = inp.readLine();
                         nodeInfo = getNode(prop);
                         if(nodeInfo[0].equals("NACK")) {
                             console.printf("DHT isn't ready yet, try again later.\n");
@@ -51,7 +57,9 @@ public class Client {
                         }
                         break;
                     case set:
-                        String[] keyValue = console.readLine("Enter Key, Value: ").split("\\s*,\\s*");
+                        System.out.println("Enter Key, Value: ");
+                        inp = new BufferedReader (new InputStreamReader(System.in));
+                        String[] keyValue = inp.readLine().split("\\s*,\\s*");
                         nodeInfo = getNode(prop);
                         if(nodeInfo[0].equals("NACK")) {
                             console.printf("DHT isn't ready yet, try again later.\n");
@@ -63,7 +71,7 @@ public class Client {
                     case desc:
                         nodeInfo = getNode(prop);
                         if(nodeInfo[0].equals("NACK")) {
-                            console.printf("DHT isn't ready yet, try again later.\n");
+                            System.out.println("DHT isn't ready yet, try again later.\n");
                         }
                         else {
                             desc(nodeInfo);
@@ -87,8 +95,9 @@ public class Client {
             SuperNodeService.Client client = new SuperNodeService.Client(protocol);
             String[] nodeInfo = client.GetNode().split("\\s*,\\s*");
             transport.close();
+            System.out.println("Successfully retrieved nodeInfo!\n");
             return nodeInfo;
-        } catch (TException e){
+        } catch (TException e) {
             System.out.println("Error connecting to the SuperNode!\n");
             System.exit(-1);
             return new String[]{};
@@ -101,7 +110,7 @@ public class Client {
         try(BufferedReader br = new BufferedReader(new FileReader(fileName))){
             String line;
             while ((line = br.readLine()) != null) {
-                set(nodeInfo, line.split("\\s*:\\s*")[0], line.split("\\s*:\\s*")[1]);
+                set(nodeInfo, line.split("\\s*,\\s*")[0], line.split("\\s*,\\s*")[1]);
             }
             System.out.printf("BulkSet from %s complete!\n", fileName);
         } catch (FileNotFoundException err) {

@@ -7,9 +7,10 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class SuperNode {
-    public static SuperNodeHandler handler;
-    private static SuperNodeService.Processor<SuperNodeHandler> processor;
+// Generated code
+public class Node2 {
+    public static NodeHandler handler;
+    private static NodeService.Processor<NodeHandler> processor;
     public static Properties prop;
 
     public static void main(String[] args) {
@@ -17,25 +18,29 @@ public class SuperNode {
             prop = new Properties();
             InputStream is = new FileInputStream("/home/taj/Taj/Tor Projects/ChorDHT/gen-java/chordht.cfg");
             prop.load(is);
-            handler = new SuperNodeHandler(prop);
-            processor = new SuperNodeService.Processor<>(handler);
 
-            startThreadPoolServer();
+            // read node id from cli
+//            Integer nodeNumber = Integer.valueOf(args[0]);
+            Integer nodeNumber = 2;
+            handler = new NodeHandler(prop, nodeNumber);
+            processor = new NodeService.Processor<>(handler);
+
+            startThreadPoolServer(nodeNumber);
         } catch (Exception x) {
             x.printStackTrace();
         }
     }
 
-    private static void startThreadPoolServer() {
+    private static void startThreadPoolServer(Integer nodeIndex) {
         try {
+            Integer serverPort = Integer.valueOf(prop.getProperty("node.ports").split("\\s*,\\s*")[nodeIndex]);
             // Create Thrift server socket as a thread pool
-            Integer serverPort = Integer.valueOf(prop.getProperty("supernode.port"));
             TServerTransport serverTransport = new TServerSocket(serverPort);
             TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
             args.processor(processor);
             TServer server = new TThreadPoolServer(args);
 
-            System.out.println("Starting the SuperNode...");
+            System.out.printf("Starting the DHTNode(No. %d)...\n", nodeIndex);
             server.serve();
         } catch (Exception e) {
             e.printStackTrace();
