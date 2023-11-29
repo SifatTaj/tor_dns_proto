@@ -17,7 +17,7 @@ public class Client {
         try {
             // Get Configs
             Properties prop = new Properties();
-            InputStream is = new FileInputStream("/home/taj/Taj/Tor Projects/ChorDHT/gen-java/chordht.cfg");
+            InputStream is = new FileInputStream("/Users/sifattaj/IdeaProjects/tor_dns_proto/gen-java/chordht.cfg");
             prop.load(is);
             String[] nodeInfo;
             Option option = Option.set;
