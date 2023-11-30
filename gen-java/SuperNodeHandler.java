@@ -56,7 +56,7 @@ public class SuperNodeHandler implements SuperNodeService.Iface {
     public synchronized void PostJoin(String ip, int port) throws TException {
         if (joinInProcess.equals(ip + ":" + port)) {
             // notify join complete
-            System.out.printf("JOIN of %s Completed Successfully!\n", joinInProcess);
+            System.out.printf("JOIN of Node %s Completed Successfully!\n", joinInProcess);
             joinInProcess = "";
         }
     }
