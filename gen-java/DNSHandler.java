@@ -28,15 +28,15 @@ public class DNSHandler implements HttpHandler {
     TProtocol protocol = new TBinaryProtocol(transport);
     NodeService.Client client = new NodeService.Client(protocol);
     GetResponse getResponse = client.get_(key);
-    if (getResponse.genre == null) {
+    if (getResponse.address == null) {
       System.out.printf("Get(%s) Failed - KeyNotFoundError!\nTrail: %s\n", key, getResponse.trail);
       return "Address not found!";
     } else {
       System.out.printf("Get(%s) Successful!\nOnion Address: %s\nTrail: %s\n",
-              key, getResponse.genre, getResponse.trail);
+              key, getResponse.address, getResponse.trail);
     }
     transport.close();
-    return getResponse.genre;
+    return getResponse.address;
   }
 
   private static String domainDesc(String[] nodeInfo) throws TException {

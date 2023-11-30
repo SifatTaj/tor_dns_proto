@@ -16,12 +16,12 @@ public class Node1 {
     public static void main(String[] args) {
         try {
             prop = new Properties();
-            InputStream is = new FileInputStream("/Users/sifattaj/IdeaProjects/tor_dns_proto/gen-java/chordht.cfg");
+            InputStream is = new FileInputStream("/Users/sifattaj/Downloads/tor_dns_proto/gen-java/chordht.cfg"); //TODO: Update path to cfg.
             prop.load(is);
 
             // read node id from cli
 //            Integer nodeNumber = Integer.valueOf(args[0]);
-            Integer nodeNumber = 1;
+            Integer nodeNumber = 1; //TODO: Set index.
             handler = new NodeHandler(prop, nodeNumber);
             processor = new NodeService.Processor<>(handler);
 

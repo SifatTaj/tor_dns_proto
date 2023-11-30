@@ -41,13 +41,13 @@ public class DNSServer {
 
   private static void setDomainName(String[] nodeInfo, String key, String value) throws TException {
     // create client connection
-    System.out.printf("Sending Set(%s, %s) to %s\n", key, value, String.join(",", nodeInfo));
+    System.out.printf("Sending SetDns(%s, %s) to %s\n", key, value, String.join(",", nodeInfo));
     TTransport transport = new TSocket(nodeInfo[0], Integer.valueOf(nodeInfo[1]));
     transport.open();
     TProtocol protocol = new TBinaryProtocol(transport);
     NodeService.Client client = new NodeService.Client(protocol);
     String trail = client.set_(key, value);
-    System.out.printf("Set(%s, %s) Successful!\nTrail: %s\n", key, value, trail);
+    System.out.printf("SetDns(%s, %s) Successful!\nTrail: %s\n", key, value, trail);
     transport.close();
   }
 
@@ -68,10 +68,10 @@ public class DNSServer {
     try {
       // Get Configs
       Properties prop = new Properties();
-      InputStream is = new FileInputStream("/Users/sifattaj/IdeaProjects/tor_dns_proto/gen-java/chordht.cfg");
+      InputStream is = new FileInputStream("/Users/sifattaj/Downloads/tor_dns_proto/gen-java/chordht.cfg"); //TODO: Update path to cfg.
       prop.load(is);
       String[] nodeInfo;
-      Client.Option option = Client.Option.set;
+      ClientTester.Option option = ClientTester.Option.setDns;
       Console console = System.console();
 
       if (args.length == 1) {

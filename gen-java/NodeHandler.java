@@ -25,7 +25,7 @@ public class NodeHandler implements NodeService.Iface {
     private Integer mbits;
     private Integer keySpace;
     private ArrayList<FingerTableEntry> fingerTable;
-    private HashMap<String, String> bookTitleGenreMapping;
+    private HashMap<String, String> domainNameAddressMapping;
     private String successor;
     private String predecessor;
 
@@ -35,7 +35,7 @@ public class NodeHandler implements NodeService.Iface {
         port = Integer.valueOf(prop.getProperty("node.ports").split("\\s*,\\s*")[nodeNumber]);
         mbits = Integer.valueOf(prop.getProperty("nodes.mbits"));
         keySpace = (int) Math.pow(2, mbits);
-        bookTitleGenreMapping = new HashMap<>();
+        domainNameAddressMapping = new HashMap<>();
 
         // Ask to join the DHT
         joinDHT();
@@ -129,15 +129,15 @@ public class NodeHandler implements NodeService.Iface {
                         "KeySpace (%d, %d] - %d Entries\n\t\tPredecessor\t\t\t\tSuccessor\n" +
                         "%s\t%s\n" +
                         "Finger Table\nStart\tEnd\tNode\n", id, Integer.valueOf(predecessor.split("\\s*,\\s*")[2]), id,
-                bookTitleGenreMapping.size(), predecessor, successor));
+                domainNameAddressMapping.size(), predecessor, successor));
         for (int i = 0; i < mbits; i++) {
             output.append(String.format("%d\t%d\t%s\n", fingerTable.get(i).start,
                     fingerTable.get(i).end, fingerTable.get(i).nodeInfo));
         }
-        if(!bookTitleGenreMapping.isEmpty()) {
+        if(!domainNameAddressMapping.isEmpty()) {
             // also include entry table if not empty
-            output.append(String.format("Entry Table\n%30s\t%15s\n", "Book Title", "Genre"));
-            for (Map.Entry<String, String> kv : bookTitleGenreMapping.entrySet()) {
+            output.append(String.format("Entry Table\n%30s\t%15s\n", "ODNS Name", "Address"));
+            for (Map.Entry<String, String> kv : domainNameAddressMapping.entrySet()) {
                 output.append(String.format("%30s\t%15s\n", kv.getKey(), kv.getValue()));
             }
         }
@@ -319,14 +319,14 @@ public class NodeHandler implements NodeService.Iface {
     }
 
     @Override
-    public String set_(String bookTitle, String genre) throws TException {
-        Integer key = intSHA1ModuloHash(bookTitle, keySpace);
-        System.out.printf("set_(%s, %s) - %d\n", bookTitle, genre, key);
-        String trail = address + "," + port + "," + id;
+    public String set_(String dnsName, String address) throws TException {
+        Integer key = intSHA1ModuloHash(dnsName, keySpace);
+        System.out.printf("set_(%s, %s) - %d\n", dnsName, address, key);
+        String trail = this.address + "," + port + "," + id;
         if (belongsToRange(key, Integer.valueOf(predecessor.split("\\s*,\\s*")[2]),
                 (id + 1) % keySpace)) { //(]
             // if the key is this node's responsibility
-            bookTitleGenreMapping.put(bookTitle, genre);
+            domainNameAddressMapping.put(dnsName, address);
             return trail;
         } else {
             // find the closest finger table entry to the key
@@ -341,22 +341,22 @@ public class NodeHandler implements NodeService.Iface {
             transport.open();
             TProtocol protocol = new TBinaryProtocol(transport);
             NodeService.Client client = new NodeService.Client(protocol);
-            trail += " -> " + client.set_(bookTitle, genre);
+            trail += " -> " + client.set_(dnsName, address);
             transport.close();
             return trail;
         }
     }
 
     @Override
-    public GetResponse get_(String bookTitle) throws TException {
-        Integer key = intSHA1ModuloHash(bookTitle, keySpace);
-        System.out.printf("get_(%s) - %d\n", bookTitle, key);
+    public GetResponse get_(String dnsName) throws TException {
+        Integer key = intSHA1ModuloHash(dnsName, keySpace);
+        System.out.printf("get_(%s) - %d\n", dnsName, key);
         String trail = address + "," + port + "," + id;
         if (belongsToRange(key, Integer.valueOf(predecessor.split("\\s*,\\s*")[2]),
                 (id + 1) % keySpace)) { //(]
             // if the key is this node's responsibility
-            String genre = bookTitleGenreMapping.get(bookTitle);
-            return new GetResponse(genre, trail);
+            String address = domainNameAddressMapping.get(dnsName);
+            return new GetResponse(address, trail);
         } else {
             // find the closest finger table entry to the key
             String[] nextNodeInfo = {};
@@ -370,7 +370,7 @@ public class NodeHandler implements NodeService.Iface {
             transport.open();
             TProtocol protocol = new TBinaryProtocol(transport);
             NodeService.Client client = new NodeService.Client(protocol);
-            GetResponse getResponse = client.get_(bookTitle);
+            GetResponse getResponse = client.get_(dnsName);
             getResponse.trail = trail + " -> " + getResponse.trail;
             transport.close();
             return getResponse;
