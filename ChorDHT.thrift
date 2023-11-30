@@ -4,7 +4,7 @@ struct JoinResponse {
 }
 
 struct GetResponse {
-	1: string genre,
+	1: string address,
 	2: string trail
 }
 
@@ -31,7 +31,7 @@ service NodeService {
     void updatePredecessor(1: string predecessor_),
     // end
     // start: functionalities
-    string set_(1: string bookTitle, 2: string genre), // return trail
-    GetResponse get_(1: string bookTitle), // return genre, trail
+    string set_(1: string dnsName, 2: string address), // return trail
+    GetResponse get_(1: string dnsName), // return address, trail
     list<string> desc(1: i32 start_id)
 }
