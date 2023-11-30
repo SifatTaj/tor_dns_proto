@@ -16,12 +16,12 @@ public class Node {
     public static void main(String[] args) {
         try {
             prop = new Properties();
-            InputStream is = new FileInputStream("/home/taj/Taj/Tor Projects/ChorDHT/gen-java/chordht.cfg"); //TODO: Update path to cfg.
+            String cfgPath = args[0];
+            InputStream is = new FileInputStream(cfgPath);
             prop.load(is);
 
             // read node id from cli
-//            Integer nodeNumber = Integer.valueOf(args[0]);
-            Integer nodeNumber = 0;
+            Integer nodeNumber = Integer.valueOf(args[1]);
             handler = new NodeHandler(prop, nodeNumber);
             processor = new NodeService.Processor<>(handler);
 
