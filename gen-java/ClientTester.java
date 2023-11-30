@@ -17,13 +17,14 @@ public class ClientTester {
         try {
             // Get Configs
             Properties prop = new Properties();
-            InputStream is = new FileInputStream("/Users/sifattaj/Downloads/tor_dns_proto/gen-java/chordht.cfg"); // TODO: Update path to cfg
+            String cfgPath = args[0];
+            InputStream is = new FileInputStream(cfgPath);
             prop.load(is);
             String[] nodeInfo;
             Option option = Option.setDns;
             Console console = System.console();
 
-            if (args.length == 1) {
+            if (args.length == 2) {
                 // set all the entries in the file provided
                 do {
                     nodeInfo = getNode(prop);
@@ -31,7 +32,7 @@ public class ClientTester {
                         console.printf("DHT isn't ready yet, trying again.\n");
                         Thread.sleep(Integer.valueOf(prop.getProperty("client.wait")));
                     } else {
-                        bulkSet(nodeInfo, args[0]);
+                        bulkSet(nodeInfo, args[1]);
                     }
                 } while(nodeInfo[0].equals("NACK"));
             }
