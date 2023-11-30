@@ -54,7 +54,7 @@ public class ClientTester {
                             console.printf("DHT isn't ready yet, try again later.\n");
                         }
                         else {
-                            get(nodeInfo, key);
+                            getDomainName(nodeInfo, key);
                         }
                         break;
                     case setDns:
@@ -66,7 +66,7 @@ public class ClientTester {
                             console.printf("DHT isn't ready yet, try again later.\n");
                         }
                         else {
-                            set(nodeInfo, keyValue[0], keyValue[1]);
+                            setDomainName(nodeInfo, keyValue[0], keyValue[1]);
                         }
                         break;
                     case descDns:
@@ -110,7 +110,7 @@ public class ClientTester {
         try(BufferedReader br = new BufferedReader(new FileReader(fileName))){
             String line;
             while ((line = br.readLine()) != null) {
-                set(nodeInfo, line.split("\\s*,\\s*")[0], line.split("\\s*,\\s*")[1]);
+                setDomainName(nodeInfo, line.split("\\s*,\\s*")[0], line.split("\\s*,\\s*")[1]);
             }
             System.out.printf("BulkSet from %s complete!\n", fileName);
         } catch (FileNotFoundException err) {
@@ -118,7 +118,7 @@ public class ClientTester {
         }
     }
 
-    private static void set(String[] nodeInfo, String key, String value) throws TException {
+    private static void setDomainName(String[] nodeInfo, String key, String value) throws TException {
         // create client connection
         System.out.printf("Sending Set(%s, %s) to %s\n", key, value, String.join(",", nodeInfo));
         TTransport transport = new TSocket(nodeInfo[0], Integer.valueOf(nodeInfo[1]));
@@ -130,7 +130,7 @@ public class ClientTester {
         transport.close();
     }
 
-    private static void get(String[] nodeInfo, String key) throws TException {
+    private static void getDomainName(String[] nodeInfo, String key) throws TException {
         // create client connection
         System.out.printf("Sending Get(%s) to %s\n", key, String.join(",", nodeInfo));
         TTransport transport = new TSocket(nodeInfo[0], Integer.valueOf(nodeInfo[1]));
@@ -154,7 +154,8 @@ public class ClientTester {
         TProtocol protocol = new TBinaryProtocol(transport);
         NodeService.Client client = new NodeService.Client(protocol);
         List<String> detailList = client.desc(Integer.valueOf(nodeInfo[2]));
-        for(String nodeDetails: detailList){
+
+        for(String nodeDetails: detailList) {
             System.out.print(nodeDetails);
         }
     }
