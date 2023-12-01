@@ -9,6 +9,6 @@
 ## Instructions
 1. Configure IP addresses and port numbers in `chrodht.cfg`.
 3. Run `SuperNode.java` with an argument that contains the path to `chrodht.cfg`.
-4. Run `Node.java` with two arguments: `arg0: path to chrodht.cfg`, `arg1: index ID`
-5. Run `DNSServer.java` two arguments: `arg0: path to chrodht.cfg`, `arg1: arg0: path to services.csv`
+4. Run `Node.java` in different computers with two arguments: `args[0]: path to chrodht.cfg`, `args[1]: index ID`.
+5. Run `DNSServer.java` two arguments: `args[0]: path to chrodht.cfg`, `args[1]: path to services.csv`.
 6. You may run `ClientTester.java` to test different functions.

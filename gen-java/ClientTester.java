@@ -54,7 +54,10 @@ public class ClientTester {
                             console.printf("DHT isn't ready yet, try again later.\n");
                         }
                         else {
+                            long startTime = System.currentTimeMillis();
                             getDomainName(nodeInfo, key);
+                            long totalTime = System.currentTimeMillis() - startTime;
+                            System.out.println("Lookup time: " + totalTime);
                         }
                         break;
                     case setDns:
